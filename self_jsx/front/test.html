@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="Tree.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+    var plus = function(){
+
+    }
+    var app = new App("#app",{
+        count: 0,
+        text : '',
+        plus: function(){
+            this.count++
+        },
+        minus: function(){
+            this.count --
+        }
+    }, function(state){ this
+        .el({
+            tag : 'button',
+            text : "-",    
+        }).click("minus")
+        .el({
+            text : state.count, 
+        }).dataset({count: state.count})
+        .el({
+            tag: 'button',
+            text: '+'
+        }).click("plus")
+        .el({
+            tag: 'input',
+            value : state.text
+        }).change("text")
+        .el({
+            text: state.text
+        })
+    })
+    </script>
+</body>
+</html>

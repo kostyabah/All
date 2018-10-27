@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <script src="Tree.js"></script>
+
+    <style>
+        svg{
+            left : 0px;
+            top : 0px;
+            position: absolute;
+            width: 600px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <svg viewBox ="0,0 360,360"></svg>
+    <script>
+        var svg = new App({
+            el : "svg", type : 'svg',
+            data: {
+                value : 180,
+                max: this.width,    
+                get text(){
+                    return  `x = ${this.value}`
+                },
+                move : function(p){
+                    
+                    this.value = p.x > this.max
+                    ? this.max: p.x;
+                }
+            },
+            width : 360,
+            on : ['mousemove'],
+            render: function(state){ this
+                .el({
+                    tag : 'linearGradient',
+                    id : 'gradient',
+                }).append(()=>{ this 
+                    .for(7, (index)=>{ this
+                        .el({
+                            tag : 'stop',
+                            offset: `${16.5 * index}%`,
+                            'stop-color': hsl([60*index, 50,50])
+                        })
+                    })
+                })
+                .el({
+                    tag : 'rect',
+                    x : 0, y: 0, width: 360, height : 40,
+                    fill : 'url(#gradient)'
+                })
+                .el({
+                    tag : 'circle',
+                    cx: state.value, 
+                    cy: 50,
+                    r : 10,
+                    fill : hsl([state.value, 50,50]),
+                    text : state.value
+                }).mousemove('move')
+                
+                .el({
+                    tag : 'text',
+                    x : state.value-10,
+                    y : 70,
+                    'font-size': '12pt',
+                    text: state.value
+                })
+                
+            }
+        })
+
+        
+    </script>
+</body>
+</html>

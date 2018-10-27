@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="canvas.js"></script>
+    <script src="Tree.js"></script>
+    <style>
+    *{
+        box-sizing : border-box
+    }
+    body {
+        margin: 0px;
+    }    
+    #app{
+        margin: 20px;
+        width: 1000px;
+        height : 50px;
+    }
+    .label{
+        margin: 20px;
+        font-size: 40pt
+    }
+    </style>
+</head>
+<body>
+    <div style="width: 1000px">
+    <!--  <h1 align="center"> Интерактивный градиент </h1>  -->    
+    </div>
+    
+    <canvas id="app" width="1000" height="50"></canvas> 
+    <script>
+        var Color  = function(index, array){
+            this.array = array
+            this.index = index
+            this.type = "rgb"
+        }
+        Color.prototype = {
+
+            get text(){
+               return `${this.type}(${this.array.join(", ")})`
+            } 
+        }
+        var h1 =  new App("div",{
+            get text(){
+                return `цвет =  ${this.value}`
+            }, 
+            value : []
+        }, function(state){ this
+            .el({
+                //tag : "h1",
+                class: "label",
+                align :"center",
+                text : state.text
+            })
+        })
+        var gradient = new Canvas("app",{
+            colors : {
+                0: [0,0,0],
+                100: [255,255,255]
+            },
+            change : function(point){
+                console.log(point);
+                h1.value = point.x;
+            },
+            add : function(point){
+                
+                this.colors[point.x] = point.color;
+            },
+            /*
+            builder : function(result, value){
+                result[value.index] = value.text;
+                return result;
+            },
+            get value() {
+                return this.colors.reduce(this.builder, {})
+            }
+            */
+
+        }, function(state){ this
+            
+            .for(state.colors, (color, key, index)=>{ this
+                .moveTo(key*10, 20)
+                .lineTo(key*10 - 10, 50)
+                .lineTo(key*10 + 10, 50)
+                ._style({
+                    fill : color,
+                    stroke : "black"
+                })
+            })
+            .rect(0, 0, 1000, 20)
+            .on({
+                enter : state.change
+            })
+            ._style({
+                fill : {
+                    type : "line",
+                    param: [0, 0, 1000, 0],
+                    colors : state.colors   
+                },
+                //stroke : "black",
+                //lineWidth : 0.2
+            })
+            
+        }).on(['enter'])
+    </script>   
+</body>
+</html>
