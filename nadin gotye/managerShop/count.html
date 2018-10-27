@@ -1,0 +1,110 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" 
+    content="width=device-width" >
+  <title> Учет товара </title>
+  <link rel="stylesheet" type="text/css" 
+        href="desktop.css">
+  <script src = "model.js"></script>
+  <script src = "Tree.js"></script>
+  <script src = "shop.js"></script>
+  <script>
+    var market = Store.read("market") || {};
+    var tool = Store.read("tool");
+    
+    var check = function (elem) {
+      var parent = elem ?
+        typeof elem == "string" ?
+          document.querySelector(elem) :
+          elem.parentNode :  
+        document.querySelector('#mysel');
+      parent.style.display = "none";
+      var uncle =  parent.nextElementSibling;
+      
+      uncle = uncle || parent.parentNode.firstElementChild;
+      uncle.style.display = "block";
+      
+    }
+    var createShop = function(elem){
+      var name = elem.parentNode
+        .firstElementChild;
+      if(!name.value)
+        return;
+      butik.insertBefore(
+        new El("option", name.value, 
+              {selected: "true", value : name.value}), 
+        butik.firstElementChild);
+      market[name.value] = new Shop(name.value);
+      butik.onchange();
+      check(elem); 
+      Store.write(market, "market");
+    }
+  </script>  
+</head>
+<body>
+  
+  <div id="parent">
+    <table id="goods" border="10"></table>
+  </div>
+
+  <div id="tool" >
+    
+    <div style="float: inherit; width: 25%;">
+      <select id="shop" 
+        onchange="selectShop(this)">
+        <option value="add"  style="color: #aaa; 
+        font-style: italic"> добавить...</option>  
+      </select>
+      <div id="newShop" style="display: none; width: 100%" >
+        <input style="float: left;"type="text" width="80%">
+        <button style="float: left;"onclick="createShop(this)" width="20%">✚</button>
+      </div>
+    </div>
+
+    <input placeholder="код" type="number" id="code" 
+      oninput="audit(this)" min="1000" max="9999">
+    <input placeholder="нет в базе. Добавьте!" id="model">   
+    <select name="" id="color"  
+      onchange="audit(this)" >
+    </select>
+    <select onchange="audit(this)" id="size">
+      <option value="S">S</option>
+      <option value="M">M</option>
+      <option value="L">L</option>
+      <option value="XL">XL</option>
+      <option value="L">XXL</option>
+      <option value="XL">XXXL</option>
+    </select> 
+    <input placeholder="к-во = 1" type="number"
+      style="float: right; width: 15%;" 
+      id="count" min="1" onchange="audit(this)">    
+  </div>
+
+  <div class="oper">  
+    
+    <select id ="view" 
+      onchange="load(this.value)">
+      <option value="sostav">состав</option>
+      <option value="history">продажи</option>
+    </select>
+  </div>  
+   
+  <div class="manager">
+    <button id="intro" style="color: #00f"> ✚</button>
+    <button id="delete" style="color: #f00">✖</button>
+    <button id="update">✍</button>
+    <button id="find">&#128270 </button>
+  </div>
+  
+  <script>
+
+   document.querySelector(".manager")
+   .onclick = function(e){
+      control.make(e.target.id);  
+    }
+    
+  </script>
+  <script src = "system.js"> </script> 
+</body>
+</html>

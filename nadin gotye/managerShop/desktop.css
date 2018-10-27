@@ -1,0 +1,123 @@
+
+body{
+  margin: 0px;
+}
+select, input, label{
+  float: left;
+  height: 30px; 
+  text-align: center;
+  font-size: 12pt;
+  margin-bottom: 5px; 
+}
+select {
+  min-width: 25%;
+  margin-right: 3%;
+}
+#shop{
+  width: 95%;
+}
+
+#newShop > input{
+  width: 70%;
+}
+#newShop > button{
+  height: 100%;
+  width: 25%;
+}
+
+#model{  
+   float: right;
+   min-width: 50%;
+   width: 45%;
+   right: 0%;
+}
+input{
+  width: 20%;
+  min-width: 15%;
+}
+
+#tool {
+  display: block;
+  float: left;
+  position: absolute;
+  height: 30px;
+  width: 100%;
+  background: #f0d;
+}
+
+
+#parent{
+  overflow-y: auto;
+  top: 100px;
+  bottom: 50px;
+  border: 2px solid #00f;
+  position: absolute;
+  width: 100%;
+}
+#goods{
+  /*border: 10px double cyan */;
+  overflow: scroll;
+  width : 100%;
+  position: absolute;
+  /*top: 200px;*/
+}
+.oper{
+  display: block;
+  float: left;
+  margin-top: 5px; 
+  top: 65px;
+  height: 30px;
+  width: 100% ;
+  position: absolute;
+  background: #fdd;
+}
+
+.check{
+  float: right;
+  height: 50px;
+  max-width: 20%;
+  width: 50px;
+  margin-left: 5px;
+  font-size: 20pt;
+}
+button:hover{
+  background: #fff;
+}
+
+.manager{
+  float: left;
+  position: absolute;
+  max-width: 100%;
+  width: 100%;
+  
+  height: 50px;
+  bottom: 0px;
+  left: 0px;
+  
+}
+.manager > button{
+  float: right;
+  width: 25%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  font-size: 28pt; 
+}
+table {
+  overflow: auto;
+}
+
+tr{
+  background: #ccf;
+}
+tr:hover{
+  background: #fff;
+}
+tr:first-child{
+  background: #fcf;
+}
+td {
+  /*background: inherit;*/
+  min-width: 20px;
+  text-align: center;
+}

@@ -1,0 +1,127 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" 
+    content="width=device-width" >
+  <title> Учет товара </title>
+  <link rel="stylesheet" type="text/css" 
+        href="desktop.css">
+  <script src = "model.js"></script>
+  <script src = "jtable.js"></script>
+  <script src = "shop.js"></script>
+  <script>
+    var market = Store.read("market") || {};
+    var tool = Store.read("tool");
+    
+    var check = function (elem) {
+      var parent = elem ?
+        typeof elem == "string" ?
+          document.querySelector(elem) :
+          elem.parentNode :  
+        document.querySelector('#mysel');
+      parent.style.display = "none";
+      var uncle =  parent.nextElementSibling;
+      uncle = uncle && uncle.id ? 
+        uncle : 
+        parent.parentNode.firstElementChild;
+      uncle.style.display = "block";
+    }
+    var createShop = function(elem){
+      var name = elem.parentNode
+        .firstElementChild;
+        
+      console.log(name);  
+      if(!name.value)
+        return;
+      //console.log(butik);
+      butik.insertBefore(
+        new El("option", name.value, 
+              {selected: "true", value : name.value}), 
+        butik.firstElementChild);
+      market[name.value] = new Shop(name.value);
+      butik.onchange();
+      check(elem); 
+      Store.write(market, "market");
+    }
+  </script>  
+</head>
+<body>
+  
+  <div id="parent">
+    <table id="goods" border="10"></table>
+  </div>
+
+  <div>
+  <div id="newShop"  class="oper">
+    <input type="text"  
+      placeholder="New Shop" id="name">
+    <button class ="check" 
+      onclick="createShop(this)"> ✚ </button>
+  </div>
+  
+  <div id="mysel" style="display: none;">
+    <div id="tool" >
+      <div id = "list1" style="display: block;">
+        <input placeholder="код" type="number" id="code" 
+          oninput="audit(this)" min="1000" max="9999">
+        <label id="lab"> модель </label>
+        <input style="display: none;" 
+            placeholder="нет в базе. Добавьте!" id="model">
+        <button class ="check"
+          onclick="check(this)">→</button>
+      </div>  
+      <div id = "list2" style="display: none;">
+        <button class ="check" 
+        onclick="check(this)">←</button>
+        <select name="" id="color"  
+          onchange="audit(this)" >
+        </select>
+        <select onchange="audit(this)" id="size">
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+        </select> 
+        <input placeholder="к-во" type="number" 
+        id="count" min="1" onchange="audit(this)">
+      </div>
+    </div>
+
+    <div class="oper">  
+      <select id="shop" 
+        onchange="audit(this)">
+      </select>
+      <select id ="view" 
+        onchange="load(this.value)">
+        <option value="sostav">состав</option>
+        <option value="history">продажи</option>
+        <option value="">&#128270 найти</option>
+      </select>
+      
+      <select id="command" 
+        onchange="control.make(this.value)">
+        <option value="intro">✚добавить</option>
+        <option value="prodaj">$продано</option>
+        <option value="">✉перевести</option>
+      </select>
+      
+      <button class="check" onclick="check()">☗</button>  
+    </div>  
+  </div> 
+  
+  </div>
+  <button id="down">
+    <span style="color: #0f0;">✔</span>
+    Выполнить
+  </button>
+  <script>  
+   document.getElementById("down")
+   .onclick = function(){
+      document.querySelector("#command")
+      .onchange();
+    }
+    
+  </script>
+  <script src = "system.js"> </script>
+</body>
+</html>

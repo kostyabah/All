@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        img{
+            width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        var each = (start, map)=>{
+            var array = start.array.slice();
+            //start.result = [];
+            return array.reduce((result, arg)=>{
+                return result.then(map)
+            }, Promise.resolve(start) )
+        }
+
+        var saveForm = (img, href) => new Promise((resolve, rej) =>{
+            img.onload = () =>{
+                var holst = document.createElement("canvas");
+                var ctx = holst.getContext("2d");
+                holst.width = img.clientWidth;
+                holst.height = img.clientHeight;
+                ctx.drawImage(img, 0,0, holst.width, holst.height);
+                document.body.appendChild(holst); 
+                dataurl = holst.toDataURL('image/jpeg');
+                var form = new FormData();  
+                form.append("image", dataurl);
+                form.append("name", href);
+                //console.log(form);
+                resolve(form);      
+            }
+            img.src = 'img/'+ href
+            document.body.appendChild(img);
+        })
+
+        fetch("/img").then(res => res.json())
+        .then(start=> each(start, data=>{
+            return fetch("/img",{
+                method : 'post',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body : JSON.stringify(data)
+            }).then(res => res.json())
+        }))
+        .then(result=>{ 
+            console.log(JSON.stringify(result.names, null, 4));
+            /*
+            return each({
+                array: result.names,
+                result: []
+            }, data =>{
+                var arg = data.array.shift()
+                console.log(arg);
+                return each({
+                    array: arg.photos.map(el=>arg.name+'/'+el),
+                    result: []
+                }, hrefs=>{
+                    var href = hrefs.array.shift();
+                    //console.log(href);
+                    var img = document.createElement('img');
+                    return saveForm(img, href)
+                    .then(form=>fetch("/upload",{
+                        method : 'post', body: form
+                    })).then(res=> res.text())
+                    .then(ans=>{
+                        console.log(ans);
+                        hrefs.result.push(ans);
+                        return hrefs;
+                    })    
+                }).then(form =>{
+                    data.result.push(form);
+                    console.log(data)
+                    return data;
+                })
+            })
+            */
+        })    
+        
+    </script>
+</body>
+</html>

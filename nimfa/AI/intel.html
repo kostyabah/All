@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+var random =function(max){
+  return Math.round(Math.random()*max);
+}    
+var intellekt = {
+  history : [],
+  set : [],
+  errors : [],
+  input : [],
+  next : function(){
+    return this.errors.reduce(function(res, value){
+       var val = Math.max(res, value)
+       return val + random(100 - val); 
+    }, random(100));
+  },
+  otsenka : function(){
+    var value = this.next();
+    this.input.push(value);
+    if(value > 90){
+      this.set.push(value);    
+      return 1;
+    }
+    else{
+      this.errors.push(value)
+      return 0;
+    }
+  },
+  
+  go : function(){
+    this.history.push(this.otsenka());
+  }
+
+}
+for(var n = 0; n < 50; n++){
+  intellekt.go();   
+}
+console.log(intellekt);
+
+  </script>
+</body>
+</html>

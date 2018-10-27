@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Nadin Gotye</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+		#photo{
+			position: absolute;
+			border: 0px solid #000;
+			height: 65%;
+			left: 39%;
+			width: 22%;
+			background-size: contain;
+		}
+	/*
+		body{
+			padding: 0;
+			margin: 0;
+		}
+		
+	*/	
+		#center{
+			border: 10px solid linear-gradient(red, blue);
+			background-size: contain;
+			width: 10%;
+		}
+		#down{
+			position: absolute;
+			height: 30%;
+			left: 0px;
+			top: 70%;
+			width: 100%;
+		}
+		#onload{
+			position: absolute;
+			top: 0px;
+		}
+		
+		table{
+			position: absolute;
+			width: 100%;
+			height: 100%;
+		}
+		td{
+			background-size: contain; 
+		}
+		img{
+			position: relative;
+			height: 30%;
+		}
+		
+	</style>
+</head>
+<body>
+	<div id ="photo" > </div> 
+	<p id="p">массив</p>
+	<div id="onload">
+		<input id="select" type="file" 
+			multiple="" onchange="selectFile(this.files)">	
+	</div>
+	
+	<div id="down"> 
+	<!--
+		<button id="prev" onclick="change(-1)"> < </button>
+		<button id="next" onclick="change(1)"> > </button>
+	-->
+	<table width="100%"><tr id="row" onclick ="change(this)">
+		<td> </td>
+		<td> </td>
+		<td> </td>
+		
+		<td> </td>
+		<td id="center"> </td>
+		<td> </td>
+
+		<td> </td>
+		<td> </td>
+		<td> </td>
+	</tr></table> 
+	</div> 
+	<script>
+		var photo = document.getElementById('photo');
+		var p = document.getElementById('p');
+		var row = document.getElementById('row');
+		var mass = [];
+		var view =[]
+		var index=0;
+		row.onclick = function(e){
+			//console.log(e.target);
+			change(e.target.cellIndex);		
+		
+		}
+		//console.log(str);
+		var images = document.querySelectorAll("td");
+		var getPath = function(file){
+			var reader = new FileReader();
+			reader.readAsText(file);
+			reader.onload = function(){
+				console.log(reader.result);
+			}
+		}
+		var selectFile = function(files){
+			//getPath(files[0]);
+			var reader = new FileReader();
+			//reader.readAsText(file);
+			reader.onload = function(){
+				console.log(reader.result);
+				mass.push(reader.result);
+			}
+			for(var i=0; i<files.length; i++){
+				//mass.push("а5/"+files[i].name);
+				reader.readAsDataURL(files[i]);
+			}
+			change(1);	
+		}
+
+		var range = function(ind){
+			if(ind<0) return mass.length+ind;
+			if(ind>=mass.length) return ind-mass.length;
+			return ind;
+		}
+		var change = function(i){
+			//console.log(i)
+			var src ="url(@) no-repeat";
+			index += i-4;
+
+			photo.style
+				.background = src.replace("@",mass.slice(index+4)[0]);
+			photo.style
+				.backgroundSize = "cover";
+			//console.log(index);
+			index %= mass.length
+				
+			if(index<0 && index>-9){
+				
+				view = mass.slice(index+mass.length, mass.length);
+				console.log(index);
+				var add =mass.slice(0, index+9);
+				view=view.concat(add);
+				console.log(view);
+				console.log(add);
+			}
+			else{
+				view = mass.slice(index, index+9);	
+			}		
+			//console.log(view);
+			view.forEach(function(v, i){
+				images[i].style
+				.background = src.replace("@",v); 
+				images[i].style
+				.backgroundSize = "cover"; 
+			});
+		}
+		
+	</script>
+	
+</body>
+</html>

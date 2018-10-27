@@ -1,0 +1,27 @@
+@big :50pt;
+input{
+    width: 600px;
+    font-size: 20pt;
+    text-align : center;
+}
+table{
+    width: 600px;
+    height: 600px;
+
+    td{
+        text-align : center;
+        font-size: 20pt;
+        border-collapse: collapse;
+        border-spacing: 6px;
+        background-color: rgb(211, 211, 211);
+        
+        width: 10%;
+        transition: 2s;
+        &:hover{
+            border-radius: 50%;
+            width : 200px;
+            color : red;
+            font-size: @big;
+        }
+    }
+}

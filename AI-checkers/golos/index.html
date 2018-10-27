@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+    html, body{
+      margin: 0px;
+      /*
+      text-align: center;
+      */
+    }
+    svg{
+      overflow: scroll;
+      width: 100vmin;
+      height: 100vmin;
+    }
+    .map{
+      position: absolute;
+      left : 100px;
+    }
+    .circle{
+      position: absolute;
+      display: inline-block;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+    }
+    table{
+      position: absolute;
+      background-color: cyan; 
+    }
+  </style>
+</head>
+<body>
+  <svg viewBox = "-1,-1 102,102"></svg>
+  <div></div>
+  <table></table>
+  <script>
+  //"api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=95b6cd227ea49a0370aa443afad6ad81"
+    
+    var getWeb = function(data){
+      var result = [];
+      for(prop in data){
+        result.push(`${prop}=${data[prop]}`)
+      }
+      console.log(result.join("&"));
+      return result.join("&");
+    }
+    var render = {
+      getPoint : function(wind){},
+      svg : function(city){
+        var state = city.render
+        var data = city.data;
+        var deg = state.deg*Math.PI/180;
+        var speed = {
+          x : state.lon + state.speed*Math.sin(deg),
+          y : state.lat + state.speed*Math.cos(deg)
+        }
+        var xmlns = "http://www.w3.org/2000/svg";
+        var g = document.createElementNS(xmlns, "g");
+        g.onclick = function(){
+          console.log(city.coord);
+          find(city.coord);
+        }
+        g.onmousemove = function(e){
+          var x = e.clientX;
+          var y = e.clientY;
+          var table = document.querySelector("table");
+          var left = x + 100 < svg.clientWidth
+                   ? "left" : "right";
+          var top = y + 100 < svg.clientHeight
+                   ? "top" : "bottom";
+          table.style[left] = `${x}px`
+          table.style[top] = `${y}px` 
+          table.innerHTML = Object.keys(data).map(function(prop){
+            var result = 
+            `<tr>
+                <td>${prop}</td>
+                <td>${data[prop]}</td>
+            </tr>`
+            return result;
+          }).join("\n");
+        } 
+        g.innerHTML = `<circle cx=${state.lon} cy=${100-state.lat} r=1 
+        fill = "hsl(${(240-state.temp*2.4)},100%, 40%)" />
+        <line x1=${state.lon} y1=${100-state.lat} x2=${speed.x} y2=${100 - speed.y} 
+        stroke = "#000" stroke-width=0.3 opacity=0.5 />
+        <text class = "text" x=${state.lon-2} y=${100-state.lat+2} font-size = 2 >
+          ${data.name} ${(data.temp-273.15).toFixed(1)} 
+        </text>`
+        //console.log(g.outerHTML); 
+        return g;  
+      },
+      html :  function(state){
+        var div = document.createElement("div");
+        div.className = "circle";
+        div.style.left = `${state.lon + 20}vmin`;
+        div.style.top = `${100 - state.lat}vmin`;
+        div.style.borderRadius = "50%";
+        div.style.backgroundColor = 
+          `hsl(${(240-state.temp*2.4)},100%, 40%)`;
+        div.title = state.name;
+        //div.textContent = state.temp; 
+        return div.outerHTML;
+      }
+    }
+    /*
+    var city = function(state){
+      return `<circle cx=${state.x} cy=${state.y} r=10 />` 
+      
+       `<circle cx=${state.x} cy=${state.y} r=${cx}
+        fill=hsl(data.temp) title=${state.name} 
+        onclick = "click()"/>`
+    }
+    */
+    var click = function(e){
+      if(e.target.tagName == "CIRCLE"){
+
+      }
+    }
+    var div = document.querySelector("div");
+    var svg = document.querySelector("svg");
+    
+  
+    var callApi = function (type, data) {
+      var head = "https://api.openweathermap.org/data/2.5/"
+      data.APPID = "95b6cd227ea49a0370aa443afad6ad81";
+      var url =`${head}${type}?${getWeb(data)}`
+      console.log(url);
+      return fetch(url).then(function(res){
+        return res.json();  
+      })
+    }
+    function showProp(city){ 
+      return {
+        lat : city.coord.lat, 
+        lon : city.coord.lon,
+        name : city.name,
+        speed : city.wind.speed,
+        deg : city.wind.deg,
+        pressure : city.main.pressure, 
+        temp : city.main.temp
+      }  
+    }
+    function find(local){
+      local.cnt = 50;
+      callApi("find", local)
+      .then(function(data){
+
+        var list = data.list;
+        console.log(list);
+        return list.map(function(city){
+          return {
+            coord : city.coord,
+            data : showProp(city)
+          };     
+        })
+      })
+      .then(function(list){
+        
+        //console.log(list);
+        var props = ["lat", "lon","temp","pressure"];
+        var getRange = function(result, city){
+          //var data = city.data;
+          return props
+          .reduce(function(res, prop){
+            res.min[prop] = res.min[prop] ? 
+              Math.min(res.min[prop], city.data[prop]) : 
+              city.data[prop];
+            res.max[prop] = res.max[prop] ? 
+              Math.max(res.max[prop], city.data[prop]) : 
+              city.data[prop];; 
+            return res;
+          },result)  
+        }
+        var range = list.reduce(getRange,{ min : {}, max : {} });
+        
+        var getValue = function(city){
+          //var data = city.data;
+          city.render = Object.keys(city.data)
+          .reduce(function(res, prop){
+            if(props.indexOf(prop)!==-1){
+              //console.log([data[prop], range.min[prop]]);
+              //console.log(data[prop] - range.min[prop]);
+              var size = range.max[prop] - range.min[prop];
+              res[prop] = city.data[prop] - range.min[prop];
+              res[prop] /= size;
+              res[prop] *= 100;
+            }else{
+              res[prop] = city.data[prop];
+            }
+            return res;   
+          }, {});
+          return city;
+        }
+        
+        return {
+          range : range,
+          list : list.map(getValue), 
+        } 
+      })
+      .then(function(data){
+        console.log(data);
+        svg.innerHTML = "";
+        data.list.map(render.svg)
+        .forEach(function(g){
+          svg.appendChild(g);
+        });
+        //div.innerHTML = html;
+        //console.log(html);
+        //svg.innerHTML = html;
+      })
+    }
+    find({lat : 46.47, lon : 30.76});
+      
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> ИИ-ШАШКИ </title>
+    <script src="Tree.js"></script>
+    <script src="checking.js"></script>
+    <style>
+        .space{
+            position: absolute;
+            width : 600px;
+            height: 600px;
+        }
+        #app{
+          
+          position: absolute;
+          top : 0%;
+           
+        }
+        .board, #app{
+            display: flex;
+            
+            flex-direction: column-reverse;
+            width : 100%;
+            height: 100%;
+        }
+        .left, .right{
+            flex:1;
+            height: 100%;
+            background: yellowgreen;
+        }
+        .line{
+            flex:1;
+            
+            display: flex;
+            width : 100%;
+        }
+        .field{
+            
+        }
+        .left:nth-child(odd){
+            
+            background-color: green;
+        }
+        .right:nth-child(even){
+            
+            background-color: green;
+        }
+        .white{
+            position: absolute;
+            width: 12.5%;
+            height: 12.5%;
+            border-radius : 50%;
+            background: yellow;
+            color : rgb(37, 9, 104);
+            text-align : center;
+            font-size : 20pt;
+            margin: auto;
+            
+        }
+        .black{
+            position: absolute;
+            width: 12.5%;
+            height: 12.5%;
+            border-radius: 50%;
+            background: darkblue;
+            color : white;
+            text-align : center;
+            font-size : 20pt;
+            margin: auto;
+        }
+        
+    </style>
+</head>
+<body>
+    
+    
+    <div class="space">
+        <div class="board">
+            <div class="line">
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+            </div>
+            <div class="line">
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+            </div>
+            <div class="line">
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+            </div>
+            <div class="line">
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+            </div>
+            <div class="line">
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+            </div>
+            <div class="line">
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+            </div>
+            <div class="line">
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+                <div class="left"></div>
+            </div>
+            <div class="line">
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+                <div class="right"></div>
+            </div>
+        </div>
+        <div id="game"></div>
+        <script>
+            var app = new App({
+                el : '#game',
+                data : {
+                    game : new Game(null, 10),
+                    step : function(){
+                        return this.game.next()
+                        //this.game.next();
+                    } 
+                },
+                render : function(state){ this
+                    .for(state.game.active, (check, index)=>{ this
+                        .el({
+                            class : 'white',
+                            style : {
+                                left : `${(check % 8)*12.5}%`,
+                                bottom : `${(Math.floor(check / 8))*12.5}%`
+                            },
+                            text : check
+                        })
+                    })
+                    .for(state.game.passive, (check, index)=>{ this
+                        .el({
+                            class : 'black',
+                            style : {
+                                left : `${(check % 8)*12.5}%`,
+                                bottom : `${(Math.floor(check / 8))*12.5}%`
+                            },
+                            text : check
+                        })
+                    })
+                }
+            })
+            
+        </script>
+        
+        <style>
+            #tool-game{
+                display : flex;
+                width : 100%;
+            }
+            #tool-game > *{
+                flex : 1;
+            }
+        </style>
+        <div id="tool-game"></div>
+        
+
+        <script>
+        var tool = new App({
+            el: '#tool-game',
+            on : ['click', 'change'],
+            data : {
+                delay : 300,
+                toogle : true,
+                play(){
+                    var flag = app.step();
+                    //console.log(flag);
+                    if(!flag){
+                        app.game.start();
+                    }
+                    //play();
+                    //setTimeout(this.play.bind(this), this.delay)
+                },
+                go(){
+                    //console.log('hjmhghj');
+                    setTimeout(this.play.bind(this), this.delay)
+                }
+            },
+            render : function(state){ this
+                .el({
+                    tag : 'button',
+                    text : 'играть'
+                }).click('play')
+                .el({
+                    tag : 'select',
+                    value : state.delay
+                }).change('delay').append(()=>{this
+                    .for([300, 1000, 2000], (delay)=>{ this
+                        .el({
+                            tag : 'option',
+                            value : delay,
+                            text : delay,
+                            selected : state.delay == delay
+                        })
+                        
+                    })
+                    
+                })
+            }
+        })
+        </script>    
+    </div>
+    <div id="state-game"></div>
+    <script>
+    
+    </script>                                               
+    
+    
+</body>
+</html>
